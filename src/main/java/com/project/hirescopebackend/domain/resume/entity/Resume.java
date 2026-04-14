@@ -50,4 +50,10 @@ public class Resume extends BaseTimeEntity {
     @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Certification> certifications = new ArrayList<>();
+
+    // PUT 수정 시 사용
+    public void updateInfo(String title, String summary) {
+        this.title = title;
+        this.summary = summary;
+    }
 }
