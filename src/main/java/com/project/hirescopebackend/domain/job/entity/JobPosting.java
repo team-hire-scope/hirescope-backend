@@ -66,4 +66,20 @@ public class JobPosting extends BaseTimeEntity {
     public boolean validateWeights() {
         return getTotalWeight() == 100;
     }
+
+    public void update(String companyName, String jobTitle, String jobDescription,
+                       String requiredSkills, String preferredQualifications,
+                       int weightJobFit, int weightCareerConsistency, int weightSkillMatch,
+                       int weightQuantitativeAchievement, int weightDocumentQuality) {
+        this.companyName = companyName;
+        this.jobTitle = jobTitle;
+        this.jobDescription = jobDescription;
+        this.requiredSkills = requiredSkills;
+        this.preferredQualifications = preferredQualifications;
+        this.weightJobFit = weightJobFit;
+        this.weightCareerConsistency = weightCareerConsistency;
+        this.weightSkillMatch = weightSkillMatch;
+        this.weightQuantitativeAchievement = weightQuantitativeAchievement;
+        this.weightDocumentQuality = weightDocumentQuality;
+    }
 }

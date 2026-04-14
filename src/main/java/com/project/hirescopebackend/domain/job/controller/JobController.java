@@ -2,35 +2,92 @@ package com.project.hirescopebackend.domain.job.controller;
 
 import com.project.hirescopebackend.domain.job.dto.JobCreateRequest;
 import com.project.hirescopebackend.domain.job.dto.JobResponse;
+import com.project.hirescopebackend.domain.job.service.JobService;
 import com.project.hirescopebackend.global.common.ApiResponse;
+import com.project.hirescopebackend.global.common.SessionUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+@Tag(name = "Job", description = "채용공고 관리 | 등록/수정은 HR 전용, 조회는 전체 가능")
 @RestController
 @RequestMapping("/api/jobs")
 @RequiredArgsConstructor
 public class JobController {
 
-    // TODO: JobService 주입
+    private final JobService jobService;
 
+    @Operation(summary = "채용공고 등록 (HR 전용)",
+            description = "5개 가중치 합계가 반드시 100이어야 합니다. 미입력 시 각 20으로 설정됩니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "등록 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "가중치 합계 오류"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "HR 권한 없음")
+    })
     @PostMapping
-    public ResponseEntity<ApiResponse<JobResponse>> create(@RequestBody JobCreateRequest request) {
-        // TODO
-        return ResponseEntity.ok(ApiResponse.ok(null));
+    public ResponseEntity<ApiResponse<JobResponse>> create(
+            @RequestBody @Valid JobCreateRequest request,
+            HttpServletRequest httpRequest) {
+        Long userId = SessionUtil.getLoginUserId(httpRequest);
+        JobResponse response = jobService.create(userId, request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.ok("채용공고 등록 완료", response));
     }
 
+    @Operation(summary = "채용공고 목록 조회",
+            description = "HR: 자신이 등록한 공고만 반환 / APPLICANT: 전체 공고 반환")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "로그인 필요")
+    })
     @GetMapping
-    public ResponseEntity<ApiResponse<List<JobResponse>>> findAll() {
-        // TODO
-        return ResponseEntity.ok(ApiResponse.ok(List.of()));
+    public ResponseEntity<ApiResponse<Page<JobResponse>>> findAll(
+            @Parameter(description = "페이지 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "페이지 크기") @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest httpRequest) {
+        Long userId = SessionUtil.getLoginUserId(httpRequest);
+        Page<JobResponse> result = jobService.findAll(userId, PageRequest.of(page, size));
+        return ResponseEntity.ok(ApiResponse.ok(result));
     }
 
+    @Operation(summary = "채용공고 상세 조회", description = "가중치 포함 전체 정보를 반환합니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "공고 없음")
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<JobResponse>> findById(@PathVariable Long id) {
-        // TODO
-        return ResponseEntity.ok(ApiResponse.ok(null));
+    public ResponseEntity<ApiResponse<JobResponse>> findById(
+            @PathVariable Long id,
+            HttpServletRequest httpRequest) {
+        SessionUtil.getLoginUserId(httpRequest); // 로그인 검증만
+        JobResponse response = jobService.findById(id);
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    @Operation(summary = "채용공고 수정 (HR 전용)",
+            description = "자신이 등록한 공고만 수정 가능. 가중치 합계 100 재검증.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "수정 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "가중치 합계 오류"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "HR 권한 없음 또는 타인 공고"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "공고 없음")
+    })
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<JobResponse>> update(
+            @PathVariable Long id,
+            @RequestBody @Valid JobCreateRequest request,
+            HttpServletRequest httpRequest) {
+        Long userId = SessionUtil.getLoginUserId(httpRequest);
+        JobResponse response = jobService.update(id, userId, request);
+        return ResponseEntity.ok(ApiResponse.ok("채용공고 수정 완료", response));
     }
 }
