@@ -38,3 +38,6 @@ out/
 
 # macOS metadata
 .DS_Store
+
+# code prompts
+hirescope-claude-code-prompt.md
