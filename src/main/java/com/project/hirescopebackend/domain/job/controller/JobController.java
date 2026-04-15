@@ -1,5 +1,8 @@
 package com.project.hirescopebackend.domain.job.controller;
 
+import com.project.hirescopebackend.domain.application.dto.ApplicantSummaryResponse;
+import com.project.hirescopebackend.domain.application.entity.ApplicationStatus;
+import com.project.hirescopebackend.domain.application.service.ApplicationService;
 import com.project.hirescopebackend.domain.job.dto.JobCreateRequest;
 import com.project.hirescopebackend.domain.job.dto.JobResponse;
 import com.project.hirescopebackend.domain.job.service.JobService;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 public class JobController {
 
     private final JobService jobService;
+    private final ApplicationService applicationService;
 
     @Operation(summary = "채용공고 등록 (HR 전용)",
             description = "5개 가중치 합계가 반드시 100이어야 합니다. 미입력 시 각 20으로 설정됩니다.")
@@ -89,5 +93,25 @@ public class JobController {
         Long userId = SessionUtil.getLoginUserId(httpRequest);
         JobResponse response = jobService.update(id, userId, request);
         return ResponseEntity.ok(ApiResponse.ok("채용공고 수정 완료", response));
+    }
+
+    @Operation(summary = "직무별 지원자 목록 조회 (HR 전용)",
+            description = "totalScore 기준 내림차순 정렬. `status=COMPLETED` 필터로 완료된 건만 조회 가능.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "HR 권한 없음 또는 타인 직무")
+    })
+    @GetMapping("/{jobId}/applicants")
+    public ResponseEntity<ApiResponse<Page<ApplicantSummaryResponse>>> getApplicants(
+            @PathVariable Long jobId,
+            @Parameter(description = "상태 필터 (PENDING / PROCESSING / COMPLETED / FAILED), 미입력 시 전체")
+            @RequestParam(required = false) ApplicationStatus status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest httpRequest) {
+        Long userId = SessionUtil.getLoginUserId(httpRequest);
+        Page<ApplicantSummaryResponse> result = applicationService.getApplicants(
+                jobId, userId, status, PageRequest.of(page, size));
+        return ResponseEntity.ok(ApiResponse.ok(result));
     }
 }
