@@ -4,18 +4,24 @@ spring:
   application:
     name: hirescope-backend
   main:
-    web-application-type: servlet  # webflux 공존 시 MVC 모드 강제 지정
+    web-application-type: servlet
+
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
+    show-sql: true
     properties:
       hibernate:
         format_sql: true
+
   session:
     store-type: redis
 
 server:
   port: 8080
+
+ai-server:
+  url: http://localhost:8000
 
 springdoc:
   swagger-ui:
@@ -24,3 +30,8 @@ springdoc:
     operations-sorter: method
   api-docs:
     path: /v3/api-docs
+
+logging:
+  level:
+    com.project.hirescopebackend: DEBUG
+    org.hibernate.SQL: DEBUG
