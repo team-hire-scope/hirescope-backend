@@ -1,0 +1,42 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, linux, deploy]
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Ensure target directories exist
+        run: |
+          mkdir -p /srv/hirescope/backend
+          mkdir -p /srv/hirescope/env
+
+      - name: Sync backend source
+        run: rsync -av --delete --exclude '.git' ./ /srv/hirescope/backend/
+
+      - name: Write backend env file
+        run: |
+          cat > /srv/hirescope/env/backend.env <<EOF
+          SPRING_PROFILES_ACTIVE=prod
+          DB_URL=${{ secrets.DB_URL }}
+          DB_USERNAME=${{ secrets.DB_USERNAME }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          EOF
+
+      - name: Rebuild and restart backend container
+        run: docker compose -f /srv/hirescope/deploy/docker-compose.prod.yml up -d --build backend
+
+      - name: Show backend container status
+        run: docker ps --filter "name=hirescope-backend"
