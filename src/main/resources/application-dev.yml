@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/hirescope
-    username: postgres
-    password: hmjeoung33
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -13,12 +13,12 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
 
 ai-server:
-  url: http://192.168.0.10:8000
-  timeout: 300000  # 5분
+  url: ${AI_SERVER_URL}
+  timeout: ${AI_SERVER_TIMEOUT:300000}  # 기본값 5분
 
 logging:
   level:
