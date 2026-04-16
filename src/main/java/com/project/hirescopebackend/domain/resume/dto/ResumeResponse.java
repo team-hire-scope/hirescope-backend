@@ -4,8 +4,8 @@ import com.project.hirescopebackend.domain.resume.entity.*;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 
 /**
@@ -54,8 +54,8 @@ public class ResumeResponse {
         private String companyName;
         private String position;
         private String rank;
-        private LocalDate startDate;
-        private LocalDate endDate;
+        private YearMonth startDate;
+        private YearMonth endDate;
         private String description;
         private String quantitativeAchievement;
 
@@ -80,8 +80,8 @@ public class ResumeResponse {
         private String schoolName;
         private String major;
         private String degree;
-        private LocalDate enrollmentDate;
-        private LocalDate graduationDate;
+        private YearMonth enrollmentDate;
+        private YearMonth graduationDate;
 
         public static EducationDto from(Education education) {
             return EducationDto.builder()
@@ -141,7 +141,7 @@ public class ResumeResponse {
         private Long id;
         private String certificationName;
         private String issuingOrganization;
-        private LocalDate acquiredDate;
+        private YearMonth acquiredDate;
 
         public static CertificationDto from(Certification certification) {
             return CertificationDto.builder()

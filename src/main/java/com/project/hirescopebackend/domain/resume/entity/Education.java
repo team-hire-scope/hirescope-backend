@@ -3,7 +3,7 @@ package com.project.hirescopebackend.domain.resume.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.YearMonth;
 
 @Entity
 @Table(name = "educations")
@@ -25,6 +25,6 @@ public class Education {
     private String major;
     private String degree; // 학사/석사/박사
 
-    private LocalDate enrollmentDate;
-    private LocalDate graduationDate;
+    private YearMonth enrollmentDate;
+    private YearMonth graduationDate;
 }

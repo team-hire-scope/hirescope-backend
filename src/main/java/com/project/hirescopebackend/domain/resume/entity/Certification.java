@@ -3,7 +3,7 @@ package com.project.hirescopebackend.domain.resume.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.YearMonth;
 
 @Entity
 @Table(name = "certifications")
@@ -23,5 +23,5 @@ public class Certification {
 
     private String certificationName;
     private String issuingOrganization;
-    private LocalDate acquiredDate;
+    private YearMonth acquiredDate;
 }

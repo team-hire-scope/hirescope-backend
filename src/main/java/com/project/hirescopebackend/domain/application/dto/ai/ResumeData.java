@@ -5,8 +5,7 @@ import com.project.hirescopebackend.domain.resume.entity.*;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.YearMonth;
 import java.util.List;
 
 @Getter
@@ -23,8 +22,6 @@ public class ResumeData {
     private List<SkillData> skills;
     private List<ProjectData> projects;
     private List<CertificationData> certifications;
-
-    private static final DateTimeFormatter MONTH_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
 
     public static ResumeData from(Resume resume) {
         return ResumeData.builder()
@@ -90,8 +87,7 @@ public class ResumeData {
                 .build();
     }
 
-    private static String formatDate(LocalDate date) {
-        if (date == null) return null;
-        return date.format(MONTH_FORMATTER);
+    private static String formatDate(YearMonth ym) {
+        return ym != null ? ym.toString() : null;
     }
 }

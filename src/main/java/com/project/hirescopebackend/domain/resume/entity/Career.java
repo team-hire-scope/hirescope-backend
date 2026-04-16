@@ -3,7 +3,7 @@ package com.project.hirescopebackend.domain.resume.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.YearMonth;
 
 @Entity
 @Table(name = "careers")
@@ -25,8 +25,8 @@ public class Career {
     private String position;
     private String rank;
 
-    private LocalDate startDate;
-    private LocalDate endDate; // nullable (재직 중인 경우)
+    private YearMonth startDate;
+    private YearMonth endDate; // nullable (재직 중인 경우)
 
     @Column(columnDefinition = "TEXT")
     private String description;
