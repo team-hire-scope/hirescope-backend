@@ -69,8 +69,7 @@ public class AnalysisResultResponse {
 
     // ── HR용 (전체 점수 + 면접 질문) ─────────────────────────────────
 
-    public static AnalysisResultResponse forHr(AnalysisResult result,
-                                               List<InterviewQuestionDto> questions) {
+    public static AnalysisResultResponse forHr(AnalysisResult result) {
         return AnalysisResultResponse.builder()
                 .status(ApplicationStatus.COMPLETED)
                 .totalScore(result.getTotalScore())
@@ -80,7 +79,6 @@ public class AnalysisResultResponse {
                 .scoreQuantitativeAchievement(result.getScoreQuantitativeAchievement())
                 .scoreDocumentQuality(result.getScoreDocumentQuality())
                 .summary(result.getSummary())
-                .interviewQuestions(questions)
                 .analyzedAt(result.getAnalyzedAt())
                 .build();
     }

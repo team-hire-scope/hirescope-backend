@@ -103,7 +103,7 @@ public class ApplicationService {
                         parseInterviewQuestions(result.getInterviewQuestions());
 
                 yield user.getRole() == UserRole.HR
-                        ? AnalysisResultResponse.forHr(result, questions)
+                        ? AnalysisResultResponse.forHr(result)
                         : AnalysisResultResponse.forApplicant(result, questions);
             }
         };
@@ -143,13 +143,7 @@ public class ApplicationService {
 
         Application application = findApplication(applicationId);
 
-        List<AnalysisResultResponse.InterviewQuestionDto> questions = Collections.emptyList();
-        if (application.getAnalysisResult() != null) {
-            questions = parseInterviewQuestions(
-                    application.getAnalysisResult().getInterviewQuestions());
-        }
-
-        return ApplicationDetailResponse.from(application, questions);
+        return ApplicationDetailResponse.from(application);
     }
 
     // ── 내부 헬퍼 ─────────────────────────────────────────────────────

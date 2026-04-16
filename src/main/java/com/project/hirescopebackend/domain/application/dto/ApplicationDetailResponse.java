@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * GET /api/applications/{id} 응답 DTO (HR 전용 - 이력서 + 분석 결과 전체)
@@ -28,8 +27,7 @@ public class ApplicationDetailResponse {
     // 분석 결과 (PENDING/FAILED 이면 null)
     private AnalysisDetail analysisResult;
 
-    public static ApplicationDetailResponse from(Application application,
-                                                 List<AnalysisResultResponse.InterviewQuestionDto> questions) {
+    public static ApplicationDetailResponse from(Application application) {
         var builder = ApplicationDetailResponse.builder()
                 .applicationId(application.getId())
                 .resumeId(application.getResume().getId())
@@ -48,7 +46,6 @@ public class ApplicationDetailResponse {
                     .scoreQuantitativeAchievement(result.getScoreQuantitativeAchievement())
                     .scoreDocumentQuality(result.getScoreDocumentQuality())
                     .summary(result.getSummary())
-                    .interviewQuestions(questions)
                     .analyzedAt(result.getAnalyzedAt())
                     .build());
         }
@@ -66,7 +63,6 @@ public class ApplicationDetailResponse {
         private Double scoreQuantitativeAchievement;
         private Double scoreDocumentQuality;
         private String summary;
-        private List<AnalysisResultResponse.InterviewQuestionDto> interviewQuestions;
         private LocalDateTime analyzedAt;
     }
 }
