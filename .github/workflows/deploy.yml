@@ -33,6 +33,8 @@ jobs:
           DB_PORT=${{ secrets.DB_PORT }}
           DB_NAME=${{ secrets.DB_NAME }}
           DB_USER=${{ secrets.DB_USER }}
+          REDIS_HOST=${{ secrets.REDIS_HOST }}
+          REDIS_PORT=${{ secrets.REDIS_PORT }}
           DB_PASSWD=${{ secrets.DB_PASSWD }}
           AI_SERVER=${{ secrets.AI_SERVER }}
           JWT_SECRET=${{ secrets.JWT_SECRET }}
