@@ -22,6 +22,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -67,8 +69,14 @@ public class ApplicationService {
 
         Application saved = applicationRepository.save(application);
 
-        // FastAPI에 비동기 분석 요청 (fire-and-forget)
-        aiClientService.requestAnalysis(saved.getId());
+        // 트랜잭션 커밋 완료 후 AI 분석 요청 (@Async 새 스레드가 DB에서 데이터를 조회할 수 있도록)
+        Long savedId = saved.getId();
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                aiClientService.requestAnalysis(savedId);
+            }
+        });
 
         return ApplicationCreateResponse.from(saved);
     }

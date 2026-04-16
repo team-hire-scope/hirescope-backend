@@ -2,8 +2,11 @@ package com.project.hirescopebackend.domain.application.dto;
 
 import com.project.hirescopebackend.domain.application.entity.AnalysisResult;
 import com.project.hirescopebackend.domain.application.entity.ApplicationStatus;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -86,9 +89,12 @@ public class AnalysisResultResponse {
 
     @Getter
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class InterviewQuestionDto {
         private String question;
         private String intent;
+        @JsonProperty("answer_guide")
         private String answerGuide;
     }
 }
