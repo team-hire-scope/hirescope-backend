@@ -2,8 +2,11 @@ package com.project.hirescopebackend.domain.application.dto;
 
 import com.project.hirescopebackend.domain.application.entity.AnalysisResult;
 import com.project.hirescopebackend.domain.application.entity.ApplicationStatus;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -66,8 +69,7 @@ public class AnalysisResultResponse {
 
     // ── HR용 (전체 점수 + 면접 질문) ─────────────────────────────────
 
-    public static AnalysisResultResponse forHr(AnalysisResult result,
-                                               List<InterviewQuestionDto> questions) {
+    public static AnalysisResultResponse forHr(AnalysisResult result) {
         return AnalysisResultResponse.builder()
                 .status(ApplicationStatus.COMPLETED)
                 .totalScore(result.getTotalScore())
@@ -77,7 +79,6 @@ public class AnalysisResultResponse {
                 .scoreQuantitativeAchievement(result.getScoreQuantitativeAchievement())
                 .scoreDocumentQuality(result.getScoreDocumentQuality())
                 .summary(result.getSummary())
-                .interviewQuestions(questions)
                 .analyzedAt(result.getAnalyzedAt())
                 .build();
     }
@@ -86,9 +87,12 @@ public class AnalysisResultResponse {
 
     @Getter
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class InterviewQuestionDto {
         private String question;
         private String intent;
+        @JsonProperty("answer_guide")
         private String answerGuide;
     }
 }

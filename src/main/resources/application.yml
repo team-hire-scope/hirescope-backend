@@ -6,6 +6,9 @@ spring:
   main:
     web-application-type: servlet
 
+  jackson:
+    default-property-inclusion: non_null  # null 필드 JSON 응답에서 자동 제외
+
   jpa:
     hibernate:
       ddl-auto: update
