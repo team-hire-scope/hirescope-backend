@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +41,26 @@ public class ApplicationController {
         ApplicationCreateResponse response = applicationService.apply(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.ok("지원이 완료되었습니다. AI 분석이 시작됩니다.", response));
+    }
+
+    @Operation(summary = "내 지원 목록 조회 (APPLICANT)",
+            description = "현재 로그인한 사용자가 지원한 채용공고 목록을 최신순으로 반환합니다. " +
+                    "(기본 정보 요약만 제공)\n\n" +
+                    "점수 및 면접 질문 등 분석 결과 상세는 " +
+                    "`GET /api/applications/{id}/result` 를 사용해주세요.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "조회 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "로그인 필요")
+    })
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<Page<MyApplicationResponse>>> getMyApplications(
+            @Parameter(description = "페이지 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "페이지 크기") @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest httpRequest) {
+        Long userId = SessionUtil.getLoginUserId(httpRequest);
+        Page<MyApplicationResponse> result = applicationService.getMyApplications(
+                userId, PageRequest.of(page, size));
+        return ResponseEntity.ok(ApiResponse.ok(result));
     }
 
     @Operation(summary = "분석 결과 조회",

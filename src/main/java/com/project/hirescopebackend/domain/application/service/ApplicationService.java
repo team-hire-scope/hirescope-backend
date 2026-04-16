@@ -146,6 +146,14 @@ public class ApplicationService {
         return ApplicationDetailResponse.from(application);
     }
 
+    // ── 내 지원 목록 (APPLICANT 본인) ─────────────────────────────────
+
+    @Transactional(readOnly = true)
+    public Page<MyApplicationResponse> getMyApplications(Long userId, Pageable pageable) {
+        return applicationRepository.findByUserIdOrderByAppliedAtDesc(userId, pageable)
+                .map(MyApplicationResponse::from);
+    }
+
     // ── 내부 헬퍼 ─────────────────────────────────────────────────────
 
     private User findUser(Long userId) {
