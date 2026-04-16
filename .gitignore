@@ -39,5 +39,8 @@ out/
 # macOS metadata
 .DS_Store
 
+# 환경변수 (민감 정보 - git 제외)
+.env
+
 # code prompts
 hirescope-claude-code-prompt.md
